@@ -28,13 +28,16 @@ This project is designed to:
 
 I am documenting this entire project as a YouTube series. Each stage has a dedicated video walking through the implementation.
 
-| Stage | Video Link |
-|-------|-----------|
-| Stage 1 – Single EC2 Instance | 🔜 Coming Soon |
-| Stage 2 – Launch Template | 🔜 Coming Soon |
-| Stage 3 – RDS Migration | 🔜 Coming Soon |
-| Stage 4 – EFS Migration | 🔜 Coming Soon |
-| Stage 5 – Auto Scaling + ALB | 🔜 Coming Soon |
+| Stage | Part | Title | Link |
+| ----- | ---- | ----- | ---- |
+| Stage 1 | Part 1 | Project Introduction and Architecture Walkthrough | [Watch](https://youtu.be/Kkt6g5VyWKU) |
+| Stage 1 | Part 2 | Architecture Diagram Deep Dive | [Watch](https://youtu.be/Ngjx2LWfYFY) |
+| Stage 1 | Part 3 | AWS Console — Infrastructure Setup and SSM Parameters | 🔜 Coming Soon |
+| Stage 1 | Part 4 | AWS Console — WordPress Installation and Verification | 🔜 Coming Soon |
+| Stage 2 | | Launch Template | 🔜 Coming Soon |
+| Stage 3 | | RDS Migration | 🔜 Coming Soon |
+| Stage 4 | | EFS Migration | 🔜 Coming Soon |
+| Stage 5 | | Auto Scaling + ALB | 🔜 Coming Soon |
 
 > 📌 Subscribe and turn on notifications so you don't miss an upload!
 

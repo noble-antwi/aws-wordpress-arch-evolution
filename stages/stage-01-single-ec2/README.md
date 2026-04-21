@@ -1,94 +1,190 @@
-# Stage 1 — Single EC2 Instance (Manual WordPress Setup)
+# Stage 1 — Single EC2 Instance
 
 > **Status:** 🔜 In Progress
 > **Difficulty:** Beginner–Intermediate
-> **Time to complete:** ~45–60 minutes
+> **Estimated lab time:** ~60–90 minutes
+
+---
+
+## 🎥 Video Series for This Stage
+
+This stage is documented across multiple videos. Watch them in order.
+
+| Part | Title | Link |
+| ---- | ----- | ---- |
+| Part 1 | Project Introduction and Architecture Walkthrough | [Watch on YouTube](https://youtu.be/Kkt6g5VyWKU) |
+| Part 2 | Architecture Diagram Deep Dive | [Watch on YouTube](https://youtu.be/Ngjx2LWfYFY) |
+| Part 3 | AWS Console — Infrastructure Setup and SSM Parameters | 🔜 Coming Soon |
+| Part 4 | AWS Console — WordPress Installation and Verification | 🔜 Coming Soon |
 
 ---
 
 ## 🎯 Objective
 
-Build a fully functional WordPress blog **manually** on a single EC2 instance. This instance hosts everything — the application (Apache + PHP), the database (MySQL), and all content files — all in one place.
+Build a fully functional WordPress blog **manually** on a single EC2 instance. This instance hosts everything — the web server (Apache + PHP), the database (MySQL), and all content files — in one place.
 
-The goal of this stage is **not efficiency** — it is **understanding**. By building everything by hand, you learn exactly what WordPress needs to run, which sets you up to automate, separate, and scale each component in later stages.
+The goal is not efficiency. It is **understanding**. By building this by hand, you experience exactly what WordPress needs to run, and you feel the limitations of this approach first-hand. Those limitations are the motivation for everything that follows in Stages 2–5.
 
 ---
 
-## 🏗️ Architecture Diagram
+## 🏗️ Architecture
 
-> 📐 See [`diagrams/stage-01-architecture.png`](./diagrams/stage-01-architecture.png)
+![Stage 1 Architecture](./diagrams/aws-wordpress-arch-evolution-stage-1.drawio.png)
 
-```
-         Internet
-             ↓
-    ┌─────────────────────┐
-    │     EC2 Instance    │
-    │                     │
-    │  Apache + PHP       │
-    │  WordPress App      │
-    │  MySQL Database     │
-    │  /wp-content/       │
-    └─────────────────────┘
-```
+**What gets deployed:**
+
+- A4L VPC (`10.16.0.0/16`) with public, app, and database subnets across three Availability Zones
+- An Internet Gateway attached to the VPC
+- One EC2 instance (`WordPress-manual`) in the public subnet of `us-east-1a`
+- Apache, PHP, MySQL, and WordPress — all installed on that single instance
+- SSM Parameter Store entries to hold database credentials and configuration
+
+**Why a three-tier VPC for a single instance?**
+
+The VPC is designed for the full five-stage architecture. We deploy it once in Stage 1 and build on it throughout the series. The database and app subnets are unused in Stage 1 but will be needed from Stage 3 onwards.
 
 ---
 
 ## ⚠️ Limitations of This Architecture
 
-| Issue | Impact |
-|-------|--------|
-| Single point of failure | If the instance goes down, the whole site goes down |
+| Problem | Consequence |
+| ------- | ----------- |
+| Single point of failure | One instance crash = entire site down |
 | No scaling | Cannot handle traffic spikes |
-| Data loss risk | Terminating the instance destroys all data |
-| No redundancy | No failover across Availability Zones |
+| Data is tied to the instance | Terminating the instance destroys the database and all media |
+| Manual rebuild required | Every recovery means repeating all of these steps |
+| No Availability Zone redundancy | One AZ outage takes down everything |
 
-These limitations are exactly what the next four stages solve.
+These are not hypothetical concerns. They are the exact problems that Stages 2–5 solve, one at a time.
 
 ---
 
 ## 📋 Prerequisites
 
-- AWS account with admin access
-- Northern Virginia (us-east-1) region selected
-- Base VPC infrastructure deployed via CloudFormation one-click link
-  > 🔗 *(Add the CloudFormation one-click link from Adrian's GitHub here)*
+- IAM admin user logged in (use the management/general AWS account — not a restricted account)
+- Region set to **us-east-1 (Northern Virginia)**
+- Base VPC stack deployed via CloudFormation before starting the steps below
 
 ---
 
-## 🛠️ Steps Completed
+## 🛠️ Implementation
 
-- [ ] Base VPC infrastructure deployed via CloudFormation
-- [ ] EC2 instance launched (Amazon Linux 2, t2.micro)
-- [ ] Security Group configured (HTTP port 80 inbound)
-- [ ] Apache web server installed and started
-- [ ] PHP and required modules installed
-- [ ] MySQL installed and secured
-- [ ] WordPress database and user created in MySQL
-- [ ] WordPress downloaded and configured
-- [ ] WordPress installation wizard completed via browser
+### Step 1 — Deploy the Base VPC
 
----
+1. Go to **AWS Console → CloudFormation → Create stack → With new resources**
+2. Choose **Upload a template file** and upload [`cloudformation/A4LVPC.yaml`](../../cloudformation/A4LVPC.yaml)
+3. Stack name: `A4LVPC`
+4. Scroll to the bottom, check the **IAM capabilities acknowledgement** box
+5. Click **Create stack**
+6. Wait for the status to reach **CREATE_COMPLETE** before continuing
 
-## 📸 Screenshots
-
-| Step | File |
-|------|------|
-| CloudFormation stack complete | `screenshots/01-cfn-stack-complete.png` |
-| EC2 instance running | `screenshots/02-ec2-running.png` |
-| WordPress install screen | `screenshots/03-wp-install.png` |
-| WordPress live | `screenshots/04-wp-live.png` |
+This stack provisions the full VPC, all subnets, the Internet Gateway, security groups, IAM roles, and the CloudWatch agent SSM configuration used in later stages.
 
 ---
 
-## 🎥 Video Walkthrough
+### Step 2 — Launch the EC2 Instance
 
-> 🔜 YouTube video coming soon
+1. Go to **AWS Console → EC2 → Launch Instance**
+2. Set the following:
+
+| Setting | Value |
+| ------- | ----- |
+| Name | `WordPress-manual` |
+| AMI | Amazon Linux 2023 (64-bit x86) — confirm Free tier eligible |
+| Instance type | `t2.micro` (or any free tier eligible equivalent) |
+| Key pair | Proceed without a key pair |
+| VPC | `A4LVPC` |
+| Subnet | `sn-pub-A` |
+| Auto-assign public IP | Enable |
+| Auto-assign IPv6 IP | Enable |
+| Security group | Select existing → `a4l-vpc-sg-wordpress` |
+| Storage | 8 GiB gp3 (default — no changes needed) |
+| IAM instance profile | `a4l-vpc-WordpressInstanceProfile-...` |
+| Credit specification | Unlimited (use Standard if your account is new) |
+
+1. Click **Launch Instance**
+
+> We connect to this instance via **Session Manager** — no SSH key is needed. On credit specification: if your AWS account is brand new, select **Standard**. Unlimited may not be available until the account has a billing history. If you select Unlimited and receive an error, repeat this step with Standard selected instead.
+
+---
+
+### Step 3 — Create SSM Parameter Store Parameters
+
+While the EC2 instance initialises, set up the SSM parameters. WordPress will read these at install time, and the automated build scripts in later stages will also use them — so this step sets up a pattern we carry through the whole series.
+
+Go to **AWS Console → Systems Manager → Parameter Store**.
+
+> If you have any existing parameters beginning with `/A4L`, delete them before continuing.
+
+Create the following five parameters one by one:
+
+#### /A4L/WordPress/DBUser
+
+| Field | Value |
+| ----- | ----- |
+| Name | `/A4L/WordPress/DBUser` |
+| Description | `WordPress database user` |
+| Tier | Standard |
+| Type | String |
+| Value | `a4lwordpressuser` |
+
+#### /A4L/WordPress/DBName
+
+| Field | Value |
+| ----- | ----- |
+| Name | `/A4L/WordPress/DBName` |
+| Description | `WordPress database name` |
+| Tier | Standard |
+| Type | String |
+| Value | `a4lWordPressDB` |
+
+#### /A4L/WordPress/DBEndpoint
+
+| Field | Value |
+| ----- | ----- |
+| Name | `/A4L/WordPress/DBEndpoint` |
+| Description | `WordPress endpoint name` |
+| Tier | Standard |
+| Type | String |
+| Value | `localhost` |
+
+> This is `localhost` in Stage 1 because the database is on the same instance as the application. In Stage 3, when we migrate to RDS, this value gets updated to the RDS endpoint — and nothing else in the configuration needs to change.
+
+#### /A4L/WordPress/DBPassword
+
+| Field | Value |
+| ----- | ----- |
+| Name | `/A4L/WordPress/DBPassword` |
+| Description | `WordPress DB password` |
+| Tier | Standard |
+| Type | SecureString |
+| KMS key ID | `alias/aws/ssm` |
+| Value | Use the strong password from the course instructions |
+
+#### /A4L/WordPress/DBRootPassword
+
+| Field | Value |
+| ----- | ----- |
+| Name | `/A4L/WordPress/DBRootPassword` |
+| Description | `WordPress DB root password` |
+| Tier | Standard |
+| Type | SecureString |
+| KMS key ID | `alias/aws/ssm` |
+| Value | Use the same strong password as above for this demo |
+
+Once all five are created, confirm they all appear in the Parameter Store list under `/A4L/WordPress/`.
+
+---
+
+### Step 4 — Install WordPress on the EC2 Instance
+
+> To be documented after recording Part 4.
 
 ---
 
 ## 📝 Key Learnings
 
-*(To be filled in after completing this stage)*
+To be filled in after completing this stage.
 
 ---
 
