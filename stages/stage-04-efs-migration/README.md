@@ -1,52 +1,53 @@
-# Stage 4 — EFS Migration (Shared File System)
+# Stage 4 — EFS Migration
 
-> **Status:** 🔒 Locked — Complete Stages 1–3 first
+> **Status:** Locked — Complete Stages 1–3 first
 > **Difficulty:** Intermediate–Advanced
-> **Time to complete:** ~45 minutes
+> **Estimated lab time:** ~45 minutes
 
 ---
 
-## 🎯 Objective
+## Video Walkthrough
 
-Move the WordPress content directory (`/wp-content/`) from the EC2 instance's local storage onto **Amazon EFS** — a managed, scalable, shared network file system. After this stage, the EC2 instance is completely stateless.
+Coming Soon
 
 ---
 
-## 🏗️ Architecture Diagram
+## Objective
 
-> 📐 See [`diagrams/stage-04-architecture.png`](./diagrams/stage-04-architecture.png)
+Move the WordPress content directory (`/wp-content/`) from the EC2 instance's local storage onto Amazon EFS — a managed, scalable, shared network file system. After this stage, the EC2 instance is completely stateless.
 
-```
+---
+
+## Architecture
+
+> See [`diagrams/stage-04-architecture.png`](./diagrams/stage-04-architecture.png)
+
+```text
          Internet
-             ↓
-    ┌──────────────────┐
-    │   EC2 Instance   │◄─── Mounts EFS on startup
-    │   (App only)     │
-    └────────┬─────────┘
-             │
+             |
+    [ EC2 Instance — App only ]
+        mounts EFS on startup
+             |
       ┌──────┴───────┐
-      ↓              ↓
-┌──────────┐  ┌────────────────┐
-│ Amazon   │  │  Amazon EFS    │
-│ RDS      │  │  /wp-content/  │
-│ (MySQL)  │  │                │
-└──────────┘  └────────────────┘
+      |              |
+[ Amazon RDS ]  [ Amazon EFS ]
+  (MySQL)        (/wp-content/)
 ```
 
 ---
 
-## 🔄 What Changes from Stage 3
+## What Changes from Stage 3
 
 | Stage 3 | Stage 4 |
-|---------|---------|
+| ------- | ------- |
 | `wp-content/` lives on EC2 disk | `wp-content/` lives on EFS |
-| Uploads and plugins lost if instance replaced | Content persists across instance replacements |
+| Uploads and plugins lost if instance is replaced | Content persists across instance replacements |
 | Only one instance can write content | Multiple instances can read and write the same content |
 | EC2 is partially stateful | EC2 is fully stateless |
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Stages 1–3 completed
 - RDS instance running and connected to WordPress
@@ -54,7 +55,7 @@ Move the WordPress content directory (`/wp-content/`) from the EC2 instance's lo
 
 ---
 
-## 🛠️ Steps Completed
+## Steps
 
 - [ ] EFS Security Group created (allow NFS port 2049 from EC2 SG)
 - [ ] EFS file system created
@@ -67,30 +68,12 @@ Move the WordPress content directory (`/wp-content/`) from the EC2 instance's lo
 
 ---
 
-## 📸 Screenshots
+## Key Learnings
 
-| Step | File |
-|------|------|
-| EFS file system creation | `screenshots/01-efs-creation.png` |
-| Mount Targets configured | `screenshots/02-mount-targets.png` |
-| EFS mounted on EC2 | `screenshots/03-efs-mounted.png` |
-| Content migrated to EFS | `screenshots/04-content-migrated.png` |
-| WordPress working with EFS | `screenshots/05-wp-efs-working.png` |
+To be filled in after completing this stage.
 
 ---
 
-## 🎥 Video Walkthrough
+## Next Stage
 
-> 🔜 YouTube video coming soon
-
----
-
-## 📝 Key Learnings
-
-*(To be filled in after completing this stage)*
-
----
-
-## ➡️ Next Stage
-
-[Stage 5 — Auto Scaling + ALB →](../stage-05-autoscaling-alb/README.md)
+[Stage 5 — Auto Scaling + ALB](../stage-05-autoscaling-alb/README.md)

@@ -1,6 +1,6 @@
-# 🎓 Attribution
+# Attribution
 
-## Adrian Cantrill — Course Creator & Architectural Designer
+## Adrian Cantrill — Course Creator and Architectural Designer
 
 This project is based on the **Advanced Demo lesson series** from:
 
@@ -13,10 +13,10 @@ This project is based on the **Advanced Demo lesson series** from:
 
 ## Why I Recommend Adrian's Courses
 
-Adrian Cantrill is widely regarded as one of the **best AWS instructors** in the industry. His courses stand out because:
+Adrian Cantrill is widely regarded as one of the best AWS instructors in the industry. His courses stand out because:
 
-- He teaches **concepts first**, not just how to click through consoles
-- Every lesson is backed by **deep architectural reasoning**
+- He teaches concepts first, not just how to click through consoles
+- Every lesson is backed by deep architectural reasoning
 - His demo labs are practical, real-world, and directly relevant to job interviews
 - He continuously updates content to reflect the latest AWS changes
 
@@ -27,7 +27,7 @@ If you are preparing for any AWS certification, I strongly encourage you to chec
 ## Scope of Attribution
 
 | What belongs to Adrian Cantrill | What is my own work |
-|--------------------------------|---------------------|
+| ------------------------------- | ------------------- |
 | Architectural evolution concept and design | Personal implementation steps |
 | Stage progression and lab structure | Screenshots and visual documentation |
 | Course narrative and teaching methodology | Notes, commentary, and reflections |
@@ -40,13 +40,13 @@ If you are preparing for any AWS certification, I strongly encourage you to chec
 
 The original lab instructions and resources that accompany this course can be found at:
 
-🔗 [https://github.com/acantril/learn-cantrill-io-labs](https://github.com/acantril/learn-cantrill-io-labs)
+[https://github.com/acantril/learn-cantrill-io-labs](https://github.com/acantril/learn-cantrill-io-labs)
 
 ---
 
 ## A Personal Note
 
-> *"I passed the AWS certification, but I knew that passing an exam and being able to actually build and evolve cloud architectures are two different things. Adrian's advanced demo series bridged that gap for me. This repository is my way of reinforcing what I learned, sharing it with others, and giving full credit to the person who made it possible."*
+> "I passed the AWS certification, but I knew that passing an exam and being able to actually build and evolve cloud architectures are two different things. Adrian's advanced demo series bridged that gap for me. This repository is my way of reinforcing what I learned, sharing it with others, and giving full credit to the person who made it possible."
 >
 > — Noble Antwi
 

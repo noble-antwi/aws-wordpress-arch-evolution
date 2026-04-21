@@ -1,68 +1,68 @@
 # Stage 5 — Auto Scaling Group + Application Load Balancer
 
-> **Status:** 🔒 Locked — Complete Stages 1–4 first
+> **Status:** Locked — Complete Stages 1–4 first
 > **Difficulty:** Advanced
-> **Time to complete:** ~60 minutes
+> **Estimated lab time:** ~60 minutes
 
 ---
 
-## 🎯 Objective
+## Video Walkthrough
 
-Complete the architectural evolution by introducing an **Application Load Balancer (ALB)** and an **Auto Scaling Group (ASG)**. This final stage makes the WordPress deployment fully elastic, self-healing, and highly available across multiple Availability Zones.
+Coming Soon
 
 ---
 
-## 🏗️ Architecture Diagram
+## Objective
 
-> 📐 See [`diagrams/stage-05-architecture.png`](./diagrams/stage-05-architecture.png)
+Complete the architectural evolution by introducing an Application Load Balancer (ALB) and an Auto Scaling Group (ASG). This final stage makes the WordPress deployment fully elastic, self-healing, and highly available across multiple Availability Zones.
 
-```
+---
+
+## Architecture
+
+> See [`diagrams/stage-05-architecture.png`](./diagrams/stage-05-architecture.png)
+
+```text
                 Internet
-                    ↓
-      ┌─────────────────────────┐
-      │  Application Load       │
-      │  Balancer (ALB)         │
-      └──────┬──────┬──────┬───┘
-             │      │      │
-          EC2-1  EC2-2  EC2-3   ← Auto Scaling Group
-             │      │      │
-             └──────┼──────┘
-                    │
+                    |
+      [ Application Load Balancer ]
+         /          |          \
+      EC2-1       EC2-2       EC2-3     (Auto Scaling Group)
+         \          |          /
+                    |
          ┌──────────┴──────────┐
-         ↓                     ↓
-   ┌──────────┐        ┌──────────────┐
-   │ Amazon   │        │ Amazon EFS   │
-   │ RDS      │        │ /wp-content/ │
-   └──────────┘        └──────────────┘
+         |                     |
+   [ Amazon RDS ]       [ Amazon EFS ]
+     (MySQL)             (/wp-content/)
 ```
 
 ---
 
-## 🔄 What Changes from Stage 4
+## What Changes from Stage 4
 
 | Stage 4 | Stage 5 |
-|---------|---------|
+| ------- | ------- |
 | Customers connect directly to EC2 IP | Customers connect to ALB DNS name |
 | Single EC2 instance | Multiple EC2 instances managed by ASG |
 | Manual scaling required | Automatic scaling based on load |
-| Instance failure = downtime | Instance failure = automatic replacement |
+| Instance failure causes downtime | Instance failure triggers automatic replacement |
 | Single Availability Zone | Multi-AZ — fully resilient |
 
 ---
 
-## ✅ Properties of the Final Architecture
+## Properties of the Final Architecture
 
 | Property | How It Is Achieved |
-|----------|--------------------|
-| **Self-healing** | ASG detects failed instances and replaces them automatically |
-| **Elastic** | ASG scales out under high load, scales in when load drops |
-| **Highly Available** | ALB and ASG span multiple Availability Zones |
-| **Stateless Compute** | Any instance can serve any request (DB on RDS, content on EFS) |
-| **Persistent Data** | RDS and EFS exist independently of any EC2 instance |
+| -------- | ------------------ |
+| Self-healing | ASG detects failed instances and replaces them automatically |
+| Elastic | ASG scales out under high load, scales in when load drops |
+| Highly Available | ALB and ASG span multiple Availability Zones |
+| Stateless Compute | Any instance can serve any request (DB on RDS, content on EFS) |
+| Persistent Data | RDS and EFS exist independently of any EC2 instance |
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Stages 1–4 completed
 - RDS running and connected to WordPress
@@ -71,12 +71,12 @@ Complete the architectural evolution by introducing an **Application Load Balanc
 
 ---
 
-## 🛠️ Steps Completed
+## Steps
 
 - [ ] ALB Security Group created (allow port 80 from internet)
 - [ ] Application Load Balancer provisioned (across multiple AZs)
 - [ ] Target Group created with health check settings
-- [ ] ALB Listener configured (port 80 → Target Group)
+- [ ] ALB Listener configured (port 80 to Target Group)
 - [ ] Auto Scaling Group created using the Launch Template
 - [ ] ASG linked to the Target Group
 - [ ] Scaling policies configured (CPU-based)
@@ -87,34 +87,14 @@ Complete the architectural evolution by introducing an **Application Load Balanc
 
 ---
 
-## 📸 Screenshots
+## Key Learnings
 
-| Step | File |
-|------|------|
-| ALB configuration | `screenshots/01-alb-config.png` |
-| Target Group health checks | `screenshots/02-target-group-healthy.png` |
-| Auto Scaling Group settings | `screenshots/03-asg-config.png` |
-| Multiple instances healthy | `screenshots/04-instances-healthy.png` |
-| WordPress via ALB DNS | `screenshots/05-wp-via-alb.png` |
-| Scale-out event in CloudWatch | `screenshots/06-scale-out-event.png` |
-| Self-healing — instance replaced | `screenshots/07-self-healing.png` |
+To be filled in after completing this stage.
 
 ---
 
-## 🎥 Video Walkthrough
+## Project Complete
 
-> 🔜 YouTube video coming soon
+You have built a production-grade, fully elastic, self-healing AWS architecture from scratch — and you understand every component and every decision that went into it.
 
----
-
-## 📝 Key Learnings
-
-*(To be filled in after completing this stage)*
-
----
-
-## 🏁 Project Complete!
-
-You have built a **production-grade, fully elastic, self-healing AWS architecture** from scratch — and you understand every component and every decision that went into it.
-
-👉 See the full [Architecture Overview](../../docs/architecture-overview.md) for a summary of the entire journey.
+See the full [Architecture Overview](../../docs/architecture-overview.md) for a summary of the entire journey.
