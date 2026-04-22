@@ -76,7 +76,64 @@ These are not hypothetical concerns. They are the exact problems that Stages 2�
 5. Click **Create stack**
 6. Wait for the status to reach **CREATE_COMPLETE** before continuing
 
-This stack provisions the full VPC, all subnets, the Internet Gateway, security groups, IAM roles, and the CloudWatch agent SSM configuration used in later stages.
+Once the stack reaches CREATE_COMPLETE, the following 37 resources will exist in your account:
+
+#### Networking
+
+| Resource | Name/Value | Purpose |
+| -------- | ---------- | ------- |
+| VPC | `A4LVPC` — `10.16.0.0/16` | The main network for the entire project |
+| IPv6 CIDR Block | AWS-provided | Adds IPv6 addressing to the VPC |
+| Internet Gateway | `A4L-IGW` | Enables internet access for the VPC |
+| IGW Attachment | — | Connects the IGW to the VPC |
+| Route Table | `A4L-vpc-rt-pub` | Shared routing for all public subnets |
+| Route (IPv4) | `0.0.0.0/0` → IGW | Default internet route for IPv4 |
+| Route (IPv6) | `::/0` → IGW | Default internet route for IPv6 |
+| RT Associations | pub-A, pub-B, pub-C | Links each public subnet to the route table |
+
+#### Subnets — 9 total, three tiers across three Availability Zones
+
+| Subnet | IPv4 CIDR | Tier | Public IP on launch |
+| ------ | --------- | ---- | ------------------- |
+| `sn-pub-A` | `10.16.48.0/20` | Public | Yes |
+| `sn-pub-B` | `10.16.112.0/20` | Public | Yes |
+| `sn-pub-C` | `10.16.176.0/20` | Public | Yes |
+| `sn-app-A` | `10.16.32.0/20` | Application | No |
+| `sn-app-B` | `10.16.96.0/20` | Application | No |
+| `sn-app-C` | `10.16.160.0/20` | Application | No |
+| `sn-db-A` | `10.16.16.0/20` | Database | No |
+| `sn-db-B` | `10.16.80.0/20` | Database | No |
+| `sn-db-C` | `10.16.144.0/20` | Database | No |
+
+Only the public subnets are used in Stage 1. The app and database subnets come into use from Stage 3 onwards.
+
+#### Security Groups — 4
+
+| Name | Allows inbound | Used from |
+| ---- | -------------- | --------- |
+| `SGWordpress` | Port 80 (HTTP) from anywhere | Stage 1 |
+| `SGDatabase` | Port 3306 (MySQL) from `SGWordpress` only | Stage 3 |
+| `SGLoadBalancer` | Port 80 (HTTP) from anywhere | Stage 5 |
+| `SGEFS` | Port 2049 (NFS) from `SGWordpress` only | Stage 4 |
+
+All four are created upfront so the security group references between them are valid from the start.
+
+#### IAM
+
+| Resource | Purpose |
+| -------- | ------- |
+| `WordpressRole` | EC2 instance role — grants access to CloudWatch Agent, SSM, and EFS |
+| `WordpressInstanceProfile` | Wraps the role so EC2 instances can assume it |
+
+#### SSM Parameter
+
+| Resource | Purpose |
+| -------- | ------- |
+| `CWAgentConfig` | Stores the CloudWatch agent configuration — defines which logs and metrics to collect from EC2 instances |
+
+#### Lambda + IAM (IPv6 workaround) — 4 resources
+
+CloudFormation cannot natively enable IPv6 auto-assign on public subnets at creation time. To work around this, the template deploys a small Python Lambda function that calls the EC2 API directly after each public subnet is created. This involves a Lambda function, an IAM role for it, and three custom resource invocations — one per public subnet.
 
 ---
 
