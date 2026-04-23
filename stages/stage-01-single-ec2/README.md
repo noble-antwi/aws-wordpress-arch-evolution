@@ -136,7 +136,7 @@ CloudFormation cannot natively enable IPv6 auto-assign on public subnets at crea
 ### Step 2 — Launch the EC2 Instance
 
 1. Go to **AWS Console → EC2 → Launch Instance**
-2. Configure the instance with the following settings:
+2. Configure the instance with the following settings and click **Launch Instance**:
 
 | Setting | Value |
 | ------- | ----- |
@@ -152,8 +152,6 @@ CloudFormation cannot natively enable IPv6 auto-assign on public subnets at crea
 | Storage | 8 GiB gp3 (default — no changes needed) |
 | IAM instance profile | `a4l-vpc-WordpressInstanceProfile-...` |
 | Credit specification | Unlimited (use Standard if your account is new and Unlimited is not available) |
-
-1. Click **Launch Instance**
 
 No SSH key is configured because access to this instance is handled entirely through AWS Systems Manager Session Manager. Session Manager allows secure shell access through the AWS console without opening port 22, without managing key pairs, and with full session logging — a better operational model than traditional SSH for this kind of architecture.
 
