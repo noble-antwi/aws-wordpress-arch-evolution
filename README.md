@@ -31,10 +31,12 @@ I am documenting this entire project as a YouTube series.
 
 | Stage | Part | Title | Link |
 | ----- | ---- | ----- | ---- |
-| Stage 1 | Part 1 | Project Introduction and Architecture Walkthrough | [Watch](https://youtu.be/Kkt6g5VyWKU) |
-| Stage 1 | Part 2 | Architecture Diagram Deep Dive | [Watch](https://youtu.be/Ngjx2LWfYFY) |
-| Stage 1 | Part 3 | AWS Console — Infrastructure Setup and SSM Parameters | Coming Soon |
-| Stage 1 | Part 4 | AWS Console — WordPress Installation and Verification | Coming Soon |
+| Stage 1 | Part 1 | Project Introduction and Architecture Walkthrough | [Watch](https://youtu.be/Ngjx2LWfYFY?si=YH5znZg8kpX9SShD) |
+| Stage 1 | Part 2 | Architecture Diagram Deep Dive | [Watch](https://youtu.be/Kkt6g5VyWKU?si=8_NCv8HnA4Mp6e5i) |
+| Stage 1 | Part 3 | Deploying the Base Infrastructure with CloudFormation | [Watch](https://youtu.be/hPf9r07op5w) |
+| Stage 1 | Part 4 | Launching the EC2 Instance | [Watch](https://youtu.be/Zv2jIfefBjg) |
+| Stage 1 | Part 5 | Configuring SSM Parameter Store | [Watch](https://youtu.be/i3q5NDssjC8) |
+| Stage 1 | Part 6 | Installing WordPress and Exposing the Limitations | [Watch](https://youtu.be/z3AEENtFhBs) |
 | Stage 2 | | Launch Template | Coming Soon |
 | Stage 3 | | RDS Migration | Coming Soon |
 | Stage 4 | | EFS Migration | Coming Soon |
@@ -97,8 +99,7 @@ aws-wordpress-arch-evolution/
 
 ## Progress Tracker
 
-- [x] Stage 1 — Videos Part 1 and Part 2 published
-- [ ] Stage 1 — AWS console implementation (Parts 3 and 4)
+- [x] Stage 1 — Complete (6 videos published, full implementation documented)
 - [ ] Stage 2 — Launch Template
 - [ ] Stage 3 — RDS Migration
 - [ ] Stage 4 — EFS Migration
